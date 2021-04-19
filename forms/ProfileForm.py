@@ -13,4 +13,4 @@ class ProfileForm(FlaskForm):
     email = EmailField('Почта', validators=[DataRequired()])
     img = FileField("Аватарка", validators=[])
     birthday = DateField('День рождения', format='%Y-%m-%d')
-    submit = SubmitField('Загрузить')
+    submit = SubmitField('Сохранить')

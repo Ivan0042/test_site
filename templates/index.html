@@ -3,9 +3,6 @@
 {% block content %}
 <h1>{{state}}</h1>
 <p>
-	{% if current_user.is_authenticated %}
-		<a href="/quest_constructor" class="btn btn-primary"> Создать свой квест </a>
-	{% endif %}
 	<form method="post">
 		<a> Поиск по названию: </a>
 		<input name="text">
@@ -14,15 +11,15 @@
 </p>
 <p><form method="post">
 	<a> Сортировка: </a>
-	{% if state != "Новые квесты" %}
-		<input type="submit" class="btn btn-link" name="new" value="Новые квесты" >
+	{% if state != "Новые треки" %}
+		<input type="submit" class="btn btn-link" name="new" value="Новые треки" >
 	{% else %}
-		<input type="submit" class="btn btn-info" name="new" value="Новые квесты" >
+		<input type="submit" class="btn btn-info" name="new" value="Новые треки" >
 	{% endif %}
-	{% if state != "По просмотрам" %}
-		<input type="submit" class="btn btn-link" name="views" value="По просмотрам" >
+	{% if state != "По прослушиваниям" %}
+		<input type="submit" class="btn btn-link" name="views" value="По прослушиваниям" >
 	{% else %}
-		<input type="submit" class="btn btn-info" name="views" value="По просмотрам" >
+		<input type="submit" class="btn btn-info" name="views" value="По прослушиваниям" >
 	{% endif %}
 	{% if state != "По лайкам/дизлайкам" %}
 		<input type="submit" class="btn btn-link" name="likes" value="По лайкам/дизлайкам" >
@@ -30,10 +27,10 @@
 		<input type="submit" class="btn btn-info" name="likes" value="По лайкам/дизлайкам" >
 	{% endif %}
 	{% if current_user.is_authenticated %}
-	{% if state != "Мои квесты" %}
-		<input type="submit" class="btn btn-link" name="my" value="Мои квесты" >
+	{% if state != "Мои треки" %}
+		<input type="submit" class="btn btn-link" name="my" value="Мои треки" >
 	{% else %}
-		<input type="submit" class="btn btn-info" name="my" value="Мои квесты" >
+		<input type="submit" class="btn btn-info" name="my" value="Мои треки" >
 	{% endif %}
 	{% endif %}
 </form></p>

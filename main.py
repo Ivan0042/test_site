@@ -20,7 +20,6 @@ from flask_login import login_user, logout_user, login_required
 from sqlalchemy import desc
 from forms.comment import Comment
 from forms.fake_quest import Fake_Quest
-import datetime
 
 Application().app = Flask(__name__)
 app = Application().app
@@ -40,24 +39,24 @@ def load_user(user_id):
 def index():
     db_sess = Application().context
     #quest_list = db_sess.query(Quest).order_by(desc(Quest.created_date))
-    state = 'Новые квесты'
+    state = 'Новые треки'
     if request.method == 'POST':
         if "new" in request.form:
-            state = 'Новые квесты'
+            state = 'Новые треки'
             #quest_list = db_sess.query(Quest).order_by(desc(Quest.created_date))
         elif 'views' in request.form:
-            state = 'По просмотрам'
+            state = 'По прослушиваниям'
             #quest_list = db_sess.query(Quest).order_by(desc(Quest.views))
         elif 'likes' in request.form:
             state = 'По лайкам/дизлайкам'
             #quest_list = db_sess.query(Quest).order_by(desc(Quest.likes - Quest.dislikes))
         elif 'my' in request.form:
-            state = 'Мои квесты'
+            state = 'Мои треки'
             #quest_list = db_sess.query(Quest).filter(Quest.user_id == current_user.id).order_by(desc(Quest.created_date))
         elif 'search' in request.form:
-            state = 'Найденные по запросу квесты'
+            state = 'Найденные по запросу треки'
             #quest_list = db_sess.query(Quest).filter(Quest.title.like(f'%{request.form.get("text")}%')).order_by(desc(Quest.created_date))
-    return render_template("index.html", title='Fairy Tale', quest_list=[], state=state)
+    return render_template("index.html", title='Musical Wind', quest_list=[], state=state)
 
 
 @app.route("/upload_music",  methods=['GET', 'POST'])
@@ -302,7 +301,7 @@ def quest_delete(id):
 
 def main():
     Application().create_context("db/sound.db")
-    app.run(debug=True)
+    app.run()
 
 
 if __name__ == '__main__':
