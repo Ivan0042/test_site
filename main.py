@@ -1,10 +1,12 @@
 from Class.Application import Application
-from Controller.LoadMusicController import LoadMusicController
 
+from Controller.LoadMusicController import LoadMusicController
 from Controller.LoginController import LoginController
 from Controller.ReqistrationController import ReqistrationController
 from Controller.UploadMusicController import UploadMusicController
 from Controller.ProfileController import MyProfileController
+from Controller.GetMusicController import GetMusicController
+from Controller.AddListMusicController import AddListMusicController
 
 from forms.LoginForm import LoginForm
 from forms.ReqistrationForm import RegisterForm
@@ -20,7 +22,6 @@ from flask_login import login_user, logout_user, login_required
 from sqlalchemy import desc
 from forms.comment import Comment
 from forms.fake_quest import Fake_Quest
-import datetime
 
 Application().app = Flask(__name__)
 app = Application().app
@@ -68,8 +69,21 @@ def upload_music():
 
 
 @app.route("/load_music_view",  methods=['GET', 'POST'])
-def upload_music_view():
+def load_music_view():
     controller = LoadMusicController()
+    return controller(request)
+
+
+@app.route("/get_music",  methods=['GET', 'POST'])
+def get_music():
+    controller = GetMusicController()
+    return controller(request)
+
+
+@app.route("/add_list_music",  methods=['GET', 'POST'])
+@login_required
+def add_list_music():
+    controller = AddListMusicController()
     return controller(request)
 
 
