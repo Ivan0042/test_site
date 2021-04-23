@@ -21,6 +21,7 @@ window.onload = ()=>{
         }
         response.json().then((data)=>{
             view(data.data)
+            defaultPlayList = data.data
         })
     })
 }
@@ -43,8 +44,8 @@ function view(data){
                 <h3>${music.listening}<span class="material-icons">headset</span></h3>
             </div>
             <div class="card_text_info">
-                <h3><span class="material-icons">thumb_up</span>${music.like}</h3>
-                <h3><span class="material-icons">thumb_down</span>${music.dislike}</h3>
+                <a href="#type=like&id=${music.id}"><font color="black"><span class="material-icons">thumb_up</span>${music.like}</font></a>
+                <a href="#type=dislike&id=${music.id}"><font color="black"><span class="material-icons">thumb_down</span>${music.dislike}</font></a>
                 <h3><span class="material-icons">question_answer</span>0</h3>
             </div>
         </div>
