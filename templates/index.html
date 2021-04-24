@@ -4,13 +4,13 @@
 <h1>{{state}}</h1>
 <p>
 	<form method="post">
-		<a> Поиск по названию: </a>
+		<a><font color="black"> Поиск по названию: </font></a>
 		<input name="text">
 		<input type="submit" class="btn btn-primary" name="search" value="🔍 Поиск" >
 	</form>
 </p>
 <p><form method="post">
-	<a> Сортировка: </a>
+	<a><font color="black"> Сортировка: </font></a>
 	{% if state != "Новые треки" %}
 		<input type="submit" class="btn btn-link" name="new" value="Новые треки" >
 	{% else %}
@@ -36,5 +36,19 @@
 </form></p>
 <div class="list_music">
 	<script src="{{ url_for('static', filename='js/load_music.js') }}"></script>
+</div>
+<div class="model_main" id="model_commens">
+	<div class="model">
+		<form action="" method="post" class="form form_model", novalidate, enctype="multipart/form-data">
+			<div class="box_input">
+				<textarea name="comment" class="input", id="comments"></textarea>
+				<label>email</label>
+			</div>
+			<a class="button btn_profile", id="submit_comment">Отправить</a>
+		</form>
+		<div class="comments_list">
+			
+		</div>
+	</div>
 </div>
 {% endblock %}

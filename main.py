@@ -1,10 +1,17 @@
 from Class.Application import Application
-from Controller.LoadMusicController import LoadMusicController
 
+from Controller.ListSoundLoadController import ListSoundLoadController
+from Controller.LoadCommentsController import LoadCommentsController
+from Controller.LoadMusicController import LoadMusicController
 from Controller.LoginController import LoginController
 from Controller.ReqistrationController import ReqistrationController
+from Controller.UploadCommentController import UploadCommentController
 from Controller.UploadMusicController import UploadMusicController
 from Controller.ProfileController import MyProfileController
+from Controller.GetMusicController import GetMusicController
+from Controller.AddListMusicController import AddListMusicController
+from Controller.AddLikeController import AddLikeController
+from Controller.AddDislikeController import AddDislikeController
 
 from forms.LoginForm import LoginForm
 from forms.ReqistrationForm import RegisterForm
@@ -12,14 +19,15 @@ from forms.UploadMusicForm import UploadMusicForm
 from forms.ProfileForm import ProfileForm
 
 from Models.User import User
+from Models.Sound import Sound
 
 import os
+import pickle
 
 from flask import Flask, render_template, redirect, request, abort, session, make_response, jsonify
 from flask_login import login_user, logout_user, login_required
 from sqlalchemy import desc
 from forms.comment import Comment
-from forms.fake_quest import Fake_Quest
 
 Application().app = Flask(__name__)
 app = Application().app
@@ -27,6 +35,7 @@ app = Application().app
 app.config["FILE_DIR"] = os.path.dirname(os.path.abspath(__file__))
 
 login_manager = Application().login_manager
+state = 'Новые треки'
 
 
 @login_manager.user_loader
@@ -37,26 +46,20 @@ def load_user(user_id):
 
 @app.route("/", methods=['GET', 'POST'])
 def index():
-    db_sess = Application().context
-    #quest_list = db_sess.query(Quest).order_by(desc(Quest.created_date))
+    global state
     state = 'Новые треки'
     if request.method == 'POST':
         if "new" in request.form:
             state = 'Новые треки'
-            #quest_list = db_sess.query(Quest).order_by(desc(Quest.created_date))
         elif 'views' in request.form:
             state = 'По прослушиваниям'
-            #quest_list = db_sess.query(Quest).order_by(desc(Quest.views))
         elif 'likes' in request.form:
             state = 'По лайкам/дизлайкам'
-            #quest_list = db_sess.query(Quest).order_by(desc(Quest.likes - Quest.dislikes))
         elif 'my' in request.form:
             state = 'Мои треки'
-            #quest_list = db_sess.query(Quest).filter(Quest.user_id == current_user.id).order_by(desc(Quest.created_date))
         elif 'search' in request.form:
-            state = 'Найденные по запросу треки'
-            #quest_list = db_sess.query(Quest).filter(Quest.title.like(f'%{request.form.get("text")}%')).order_by(desc(Quest.created_date))
-    return render_template("index.html", title='Musical Wind', quest_list=[], state=state)
+            state = f'Найденные треки по запросу: {request.form.get("text")}'
+    return render_template("index.html", title='Musical Wind', state=state)
 
 
 @app.route("/upload_music",  methods=['GET', 'POST'])
@@ -66,11 +69,67 @@ def upload_music():
     return controller()
 
 
-@app.route("/load_music_view",  methods=['GET', 'POST'])
-def upload_music_view():
-    controller = LoadMusicController()
+@app.route("/load_view_comments",  methods=['GET', 'POST'])
+def load_view_comments():
+    controller = LoadCommentsController()
     return controller(request)
 
+
+@app.route("/load_music_view",  methods=['GET', 'POST'])
+def load_music_view():
+    global state
+    controller = LoadMusicController()
+    return controller(request, state)
+
+
+@app.route("/upload_comment",  methods=['GET', 'POST'])
+@login_required
+def upload_comment():
+    controller = UploadCommentController()
+    return controller(request)
+
+
+@app.route("/list_sound_view",  methods=['GET', 'POST'])
+@login_required
+def list_sound_view():
+    controller = ListSoundLoadController()
+    return controller(request)
+
+
+@app.route("/get_music",  methods=['GET', 'POST'])
+def get_music():
+    controller = GetMusicController()
+    return make_response(jsonify({"data": controller(request.get_json())}), 200)
+
+
+@app.route("/add_list_music",  methods=['GET', 'POST'])
+@login_required
+def add_list_music():
+    controller = AddListMusicController()
+    return controller(request)
+
+@app.route("/add_like",  methods=['GET', 'POST'])
+@login_required
+def add_like_music():
+    controller = AddLikeController()
+    return controller(request)
+
+@app.route("/add_dislike",  methods=['GET', 'POST'])
+@login_required
+def add_dislike_music():
+    controller = AddDislikeController()
+    return controller(request)
+
+@app.route("/add_listening",  methods=['GET', 'POST'])
+def add_listening():
+    snd = Application().context.query(Sound).filter(Sound.id == request.get_json()["id"]).first()
+    if f'{snd.id}viewed' not in session:
+        listn = pickle.loads(snd.listening)
+        listn.append(0)
+        snd.listening = pickle.dumps(listn)
+        session[f'{snd.id}viewed'] = 1            
+        Application().context.commit()
+    return 'a'
 
 @app.route("/my_profile",  methods=['GET', 'POST'])
 @login_required
@@ -95,209 +154,10 @@ def reqister():
 @app.route('/logout')
 @login_required
 def logout():
+    global state
+    state = 'Новые треки'
     logout_user()
     return redirect("/")
-
-
-'''@app.route('/quest/<int:quest_id>', methods=['GET', 'POST'])
-def quest_main_page(quest_id):
-    db_sess = Application().context
-    quest = db_sess.query(Quest).filter(Quest.id == quest_id).first()
-    if not quest:
-        abort(404)
-
-    comments = db_sess.query(Commentary).filter(Commentary.quest_id == quest_id).order_by(desc(Commentary.created_date))
-    
-    if f'{quest_id}viewed' not in session:
-        quest.views += 1
-        session[f'{quest_id}viewed'] = 1            
-        db_sess.commit()
-        
-    state = 'none'
-    if current_user.is_authenticated:
-        user = db_sess.query(User).filter(User.id == current_user.id).first()
-        if str(quest_id) in user.like.split():
-            state = 'liked'
-        elif str(quest_id) in user.dislike.split():
-            state = 'disliked'
-        else:
-            state = 'none'
-        
-    if request.method == 'POST':
-        if "like" in request.form:
-            if state == 'liked':
-                t = user.like.split()
-                t.remove(str(quest_id))
-                user.like = ' '.join(t)
-                quest.likes -= 1
-            else:
-                user.like += ' ' + str(quest_id)
-                quest.likes += 1
-                if state == 'disliked':
-                    t = user.dislike.split()
-                    t.remove(str(quest_id))
-                    user.dislike = ' '.join(t)
-                    quest.dislikes -= 1
-        elif "dislike" in request.form:
-            if state == 'disliked':
-                t = user.dislike.split()
-                t.remove(str(quest_id))
-                user.dislike = ' '.join(t)
-                quest.dislikes -= 1
-            else:
-                user.dislike += ' ' + str(quest_id)
-                quest.dislikes += 1
-                if state == 'liked':
-                    t = user.like.split()
-                    t.remove(str(quest_id))
-                    user.like = ' '.join(t)
-                    quest.likes -= 1
-        db_sess.commit()
-        return redirect(f'/quest/{quest_id}')
-        
-    return render_template("quest_main_page.html", title=quest.title, quest=quest, comments=comments, state=state)
-
-
-@app.route('/quest/<int:quest_id>/commenting', methods=['GET', 'POST'])
-@login_required
-def add_commentary(quest_id):
-    form = Comment()
-    if form.validate_on_submit():
-        db_sess = Application().context
-        commentary = Commentary()
-        commentary.content = form.content.data
-        commentary.quest_id = quest_id
-        current_user.commentary.append(commentary)
-        db_sess.merge(current_user)
-        db_sess.commit()
-        return redirect(f'/quest/{quest_id}')
-    return render_template('commenting.html', title='Добавление комментария', 
-                           form=form)
-
-
-@app.route('/quest/<int:quest_id>/commenting/<int:id>', methods=['GET', 'POST'])
-@login_required
-def edit_comment(quest_id, id):
-    form = Comment()
-    if request.method == "GET":
-        db_sess = Application().context
-        commentary = db_sess.query(Commentary).filter(Commentary.id == id,
-                                          Commentary.user == current_user
-                                          ).first()
-        if current_user.moderation:
-            commentary = db_sess.query(Commentary).filter(Commentary.id == id).first()            
-        if commentary:
-            form.content.data = commentary.content
-        else:
-            abort(404)
-    if form.validate_on_submit():
-        db_sess = db_session.create_session()
-        commentary = db_sess.query(Commentary).filter(Commentary.id == id,
-                                          Commentary.user == current_user
-                                          ).first()
-        if current_user.moderation:
-            commentary = db_sess.query(Commentary).filter(Commentary.id == id).first()        
-        if commentary:
-            commentary.content = form.content.data
-            commentary.edited = True
-            db_sess.commit()
-            return redirect(f'/quest/{quest_id}')
-        else:
-            abort(404)
-    return render_template('commenting.html',
-                           title='Редактирование комментария',
-                           form=form
-                           )
-
-
-@app.route('/quest/<int:quest_id>/delete_commentary/<int:id>', methods=['GET', 'POST'])
-@login_required
-def comment_delete(quest_id, id):
-    db_sess = Application().context
-    commentary = db_sess.query(Commentary).filter(Commentary.id == id,
-                                      Commentary.user == current_user
-                                      ).first()
-    if current_user.moderation:
-        commentary = db_sess.query(Commentary).filter(Commentary.id == id).first()    
-    if commentary:
-        db_sess.delete(commentary)
-        db_sess.commit()
-    else:
-        abort(404)
-    return redirect(f'/quest/{quest_id}')
-
-
-@app.route('/quest_constructor', methods=['GET', 'POST'])
-@login_required
-def add_quest():
-    form = Fake_Quest()
-    if form.validate_on_submit():
-        db_sess = db_session.create_session()
-        quest = Quest()
-        quest.title = form.title.data
-        quest.description = form.description.data
-        current_user.quests.append(quest)
-        db_sess.merge(current_user)
-        db_sess.commit()
-        return redirect('/')
-    return render_template('fake_quest_constructor.html', title='Создание квеста', 
-                           form=form)
-
-
-@app.route('/quest_constructor/<int:id>', methods=['GET', 'POST'])
-@login_required
-def edit_quest(id):
-    form = Fake_Quest()
-    if request.method == "GET":
-        db_sess = Application().context
-        quest = db_sess.query(Quest).filter(Quest.id == id,
-                                          Quest.user == current_user
-                                          ).first()
-        if current_user.moderation:
-            quest = db_sess.query(Quest).filter(Quest.id == id).first()            
-        if quest:
-            form.title.data = quest.title
-            form.description.data = quest.description
-        else:
-            abort(404)
-    if form.validate_on_submit():
-        db_sess = db_session.create_session()
-        quest = db_sess.query(Quest).filter(Quest.id == id,
-                                          Quest.user == current_user
-                                          ).first()
-        if current_user.moderation:
-            quest = db_sess.query(Quest).filter(Quest.id == id).first()       
-        if quest:
-            quest.title = form.title.data
-            quest.description = form.description.data
-            db_sess.commit()
-            return redirect('/')
-        else:
-            abort(404)
-    return render_template('fake_quest_constructor.html',
-                           title='Редактирование квеста',
-                           form=form
-                           )
-
-
-@app.route('/quest_delete/<int:id>', methods=['GET', 'POST'])
-@login_required
-def quest_delete(id):
-    db_sess = Application().context
-    quest = db_sess.query(Quest).filter(Quest.id == id,
-                                          Quest.user == current_user
-                                          ).first()
-    if current_user.moderation:
-        quest = db_sess.query(Quest).filter(Quest.id == id).first()     
-    if quest:
-        db_sess.delete(quest)
-        db_sess.commit()
-    else:
-        abort(404)
-    return redirect('/')
-
-'''
-
 
 def main():
     Application().create_context("db/sound.db")
