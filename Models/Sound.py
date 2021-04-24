@@ -15,7 +15,6 @@ class Sound(Application().model):
     listening = Column(LargeBinary, nullable=True, default=pickle.dumps([]))
     like = Column(LargeBinary, nullable=True, default=pickle.dumps([]))
     dislike = Column(LargeBinary, nullable=True, default=pickle.dumps([]))
-    comments = Column(Integer, nullable=True, default=0)
     created_date = Column(DateTime, default=datetime.datetime.now)
     id_user = Column(Integer)
 
