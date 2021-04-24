@@ -58,7 +58,7 @@ function view(data){
 function modelComments(){
     const buttonModel = document.querySelectorAll("#commens_button")
     const model_wind_info = document.querySelector("#model_commens")
-    
+
     try {
         for(button of buttonModel){
             button.addEventListener("click", (e)=>{
@@ -86,7 +86,7 @@ function viewCommends(data){
         </div>
     </div>`
         mainBody.insertAdjacentHTML("beforeEnd", card);
-    }    
+    }
 }
 
 
