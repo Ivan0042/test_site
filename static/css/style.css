@@ -54,6 +54,7 @@ button:focus{
 }
 
 .header_nav{
+    display: flex;
     font-size: 25px;
     font-weight: normal;
     text-align: center;
@@ -202,7 +203,7 @@ button:focus{
 
 .model{
     background-color: rgba(255, 255, 255, 1);
-    width: 30%;
+    width: 75vw;
     display: flex;
     justify-content: space-around;
     align-items: center;

@@ -66,6 +66,7 @@
 .button_player{
     background: none;
     border: none;
+    margin: 0;
 }
 
 .player_list_sound{
@@ -90,4 +91,8 @@
 .volume_slider{
     transform: rotate(-90deg);
     width: 110px;
+}
+
+.player_button{
+    display: flex;
 }
