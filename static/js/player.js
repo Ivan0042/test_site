@@ -90,7 +90,7 @@ function nextSound(){
     for(let i = 0; i < currentPlayList.length; i++){
         if(currentPlayList[i].id == currentSound){
             info = i
-        } 
+        }
     }
     if(info + 1 > currentPlayList.length - 1){
         sound = currentPlayList[0]
@@ -105,7 +105,7 @@ function pregSound(){
     for(let i = 0; i < currentPlayList.length; i++){
         if(currentPlayList[i].id == currentSound){
             info = i
-        } 
+        }
     }
     if(info - 1 < 0){
         sound = currentPlayList[currentPlayList.length - 1]
@@ -203,7 +203,7 @@ function viewListSound(data, where, id){
         </div>
     </div>`
         where.insertAdjacentHTML("beforeEnd", card);
-    }    
+    }
 }
 
 function viewList(data, where){
@@ -284,7 +284,7 @@ window.addEventListener('popstate', function(e){
                 }
             })
         })
-		
+
 		fetch(`${window.origin}/add_listening`, {
             method:"POST",
             credentials: "include",
@@ -323,7 +323,7 @@ window.addEventListener('popstate', function(e){
         const mass = {
             id: params.get("id")
         }
-    
+
         fetch(`${window.origin}/add_like`, {
             method:"POST",
             credentials: "include",
@@ -348,7 +348,7 @@ window.addEventListener('popstate', function(e){
         const mass = {
             id: params.get("id")
         }
-    
+
         fetch(`${window.origin}/add_dislike`, {
             method:"POST",
             credentials: "include",
