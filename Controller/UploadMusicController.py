@@ -32,5 +32,5 @@ class UploadMusicController(IController):
             app().context.commit()
             img.save(os.path.join(app().app.config["FILE_DIR"], "static", filename_img))
             music.save(os.path.join(app().app.config["FILE_DIR"], "static", filename_music))
-            return redirect("/")
-        return render_template('load_music.html', title='Регистрация', form=self.__model)
+            #return redirect("/")
+        return render_template('load_music.html', title='Загрузка музыки', form=self.__model)

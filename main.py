@@ -1,16 +1,17 @@
 from Class.Application import Application
 
 from Controller.ListSoundLoadController import ListSoundLoadController
+from Controller.LoadCommentsController import LoadCommentsController
 from Controller.LoadMusicController import LoadMusicController
 from Controller.LoginController import LoginController
 from Controller.ReqistrationController import ReqistrationController
+from Controller.UploadCommentController import UploadCommentController
 from Controller.UploadMusicController import UploadMusicController
 from Controller.ProfileController import MyProfileController
 from Controller.GetMusicController import GetMusicController
 from Controller.AddListMusicController import AddListMusicController
 from Controller.AddLikeController import AddLikeController
 from Controller.AddDislikeController import AddDislikeController
-from Controller.AddListeningController import AddListeningController
 
 from forms.LoginForm import LoginForm
 from forms.ReqistrationForm import RegisterForm
@@ -35,6 +36,7 @@ app.config["FILE_DIR"] = os.path.dirname(os.path.abspath(__file__))
 
 login_manager = Application().login_manager
 state = 'Новые треки'
+
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -67,11 +69,24 @@ def upload_music():
     return controller()
 
 
+@app.route("/load_view_comments",  methods=['GET', 'POST'])
+def load_view_comments():
+    controller = LoadCommentsController()
+    return controller(request)
+
+
 @app.route("/load_music_view",  methods=['GET', 'POST'])
 def load_music_view():
     global state
     controller = LoadMusicController()
     return controller(request, state)
+
+
+@app.route("/upload_comment",  methods=['GET', 'POST'])
+@login_required
+def upload_comment():
+    controller = UploadCommentController()
+    return controller(request)
 
 
 @app.route("/list_sound_view",  methods=['GET', 'POST'])
@@ -86,16 +101,6 @@ def get_music():
     controller = GetMusicController()
     return make_response(jsonify({"data": controller(request.get_json())}), 200)
 
-@app.route("/add_listening",  methods=['GET', 'POST'])
-def add_listening():
-    snd = Application().context.query(Sound).filter(Sound.id == request.get_json()["id"]).first()
-    if f'{snd.id}viewed' not in session:
-        listn = pickle.loads(snd.listening)
-        listn.append(0)
-        snd.listening = pickle.dumps(listn)
-        session[f'{snd.id}viewed'] = 1            
-        Application().context.commit()
-    return 'a'
 
 @app.route("/add_list_music",  methods=['GET', 'POST'])
 @login_required
@@ -114,6 +119,17 @@ def add_like_music():
 def add_dislike_music():
     controller = AddDislikeController()
     return controller(request)
+
+@app.route("/add_listening",  methods=['GET', 'POST'])
+def add_listening():
+    snd = Application().context.query(Sound).filter(Sound.id == request.get_json()["id"]).first()
+    if f'{snd.id}viewed' not in session:
+        listn = pickle.loads(snd.listening)
+        listn.append(0)
+        snd.listening = pickle.dumps(listn)
+        session[f'{snd.id}viewed'] = 1            
+        Application().context.commit()
+    return 'a'
 
 @app.route("/my_profile",  methods=['GET', 'POST'])
 @login_required
@@ -138,12 +154,13 @@ def reqister():
 @app.route('/logout')
 @login_required
 def logout():
+    global state
+    state = 'Новые треки'
     logout_user()
     return redirect("/")
 
 def main():
     Application().create_context("db/sound.db")
-    
     app.run()
 
 

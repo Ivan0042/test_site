@@ -5,6 +5,7 @@ from flask import jsonify, make_response
 from Class.Interfase.IController import IController
 from Class.MakeResponse import MakeResponse
 from sqlalchemy import desc
+import pickle
 
 
 class LoadMusicController(IController):
@@ -16,7 +17,8 @@ class LoadMusicController(IController):
         elif state == 'По прослушиваниям':
             sounds = app().context.query(Sound).order_by(desc(Sound.listening))
         elif state == 'По лайкам/дизлайкам':
-            sounds = app().context.query(Sound).order_by(desc(Sound.like - Sound.dislike))
+            sounds = sorted(sounds, key=lambda x: len(pickle.loads(x.like)) - len(pickle.loads(x.dislike)))
+            sounds.reverse()
         elif state == 'Мои треки':
             sounds = app().context.query(Sound).filter(Sound.id_user == current_user.id).order_by(desc(Sound.created_date))
         elif 'Найденные треки по запросу:' in state:
@@ -24,6 +26,5 @@ class LoadMusicController(IController):
         sounds = list(map(lambda x: MakeResponse.make_response_sound(x.__dict__), sounds))
         res = make_response(jsonify({"data": sounds}), 200)
         return res
-
 
 

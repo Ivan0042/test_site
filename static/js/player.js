@@ -101,7 +101,18 @@ function nextSound(){
 }
 
 function pregSound(){
-
+    let info = 0
+    for(let i = 0; i < currentPlayList.length; i++){
+        if(currentPlayList[i].id == currentSound){
+            info = i
+        } 
+    }
+    if(info - 1 < 0){
+        sound = currentPlayList[currentPlayList.length - 1]
+    }else {
+        sound = currentPlayList[info - 1]
+    }
+    loadSound(sound.file_name, sound.img, sound.name, sound.id_user, sound.id)
 }
 
 function setVolume(){
@@ -185,9 +196,9 @@ function viewListSound(data, where, id){
                 <h3>${music.listening}<span class="material-icons">headset</span></h3>
             </div>
             <div class="card_text_info list_info">
-                <h3><span class="material-icons">thumb_up</span>${music.like}</h3>
-                <h3><span class="material-icons">thumb_down</span>${music.dislike}</h3>
-                <h3><span class="material-icons">question_answer</span>0</h3>
+                <a href="#type=like&id=${music.id}"><h5><font color="black"><span class="material-icons">thumb_up</span>${music.like}</font></h5></a>
+                <a href="#type=dislike&id=${music.id}"><h5><font color="black"><span class="material-icons">thumb_down</span>${music.dislike}</font></h5></a>
+                <a href="#id=${music.id}" id="commens_button"><h5><font color="black"><span class="material-icons">question_answer</span>${music.comments}</font></h5></a>
             </div>
         </div>
     </div>`
@@ -273,8 +284,8 @@ window.addEventListener('popstate', function(e){
                 }
             })
         })
-    
-        fetch(`${window.origin}/add_listening`, {
+		
+		fetch(`${window.origin}/add_listening`, {
             method:"POST",
             credentials: "include",
             body: JSON.stringify(mass),
