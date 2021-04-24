@@ -196,9 +196,9 @@ function viewListSound(data, where, id){
                 <h3>${music.listening}<span class="material-icons">headset</span></h3>
             </div>
             <div class="card_text_info list_info">
-                <a href="#type=like&id=${music.id}"><h5><font color="black"><span class="material-icons">thumb_up</span>${music.like}</font></h5></a>
-                <a href="#type=dislike&id=${music.id}"><h5><font color="black"><span class="material-icons">thumb_down</span>${music.dislike}</font></h5></a>
-                <a href="#id=${music.id}" id="commens_button"><h5><font color="black"><span class="material-icons">question_answer</span>${music.comments}</font></h5></a>
+                <a href="#type=like&id=${music.id}"><h3><span class="material-icons">thumb_up</span>${music.like}</h3></a>
+                <a href="#type=dislike&id=${music.id}"><h3><span class="material-icons">thumb_down</span>${music.dislike}</h3></a>
+                <a href="#id=${music.id}" id="commens_button"><h3><span class="material-icons">question_answer</span>${music.comments}</h3></a>
             </div>
         </div>
     </div>`
@@ -343,6 +343,7 @@ window.addEventListener('popstate', function(e){
             })
         })
     }
+
 	else if(params.get("type") == "dislike"){
         const mass = {
             id: params.get("id")

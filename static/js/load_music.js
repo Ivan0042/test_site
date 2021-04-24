@@ -44,17 +44,18 @@ function view(data){
                 <h3>${music.listening}<span class="material-icons">headset</span></h3>
             </div>
             <div class="card_text_info">
-                <a href="#type=like&id=${music.id}"><h5><font color="black"><span class="material-icons">thumb_up</span>${music.like}</font></h5></a>
-                <a href="#type=dislike&id=${music.id}"><h5><font color="black"><span class="material-icons">thumb_down</span>${music.dislike}</font></h5></a>
-                <a href="#id=${music.id}" id="commens_button"><h5><font color="black"><span class="material-icons">question_answer</span>${music.comments}</font></h5></a>
+                <a href="#type=like&id=${music.id}"><h3><span class="material-icons">thumb_up</span>${music.like}</h3></a>
+                <a href="#type=dislike&id=${music.id}"><h3><span class="material-icons">thumb_down</span>${music.dislike}</h3></a>
+                <a href="#id=${music.id}" id="commens_button"><h3><span class="material-icons">question_answer</span>${music.comments}</h3></a>
             </div>
         </div>
     </div>`
         mainBody.insertAdjacentHTML("beforeEnd", card);
-    }    
+    }
+    modelComments()
 }
 
-setTimeout(()=>{
+function modelComments(){
     const buttonModel = document.querySelectorAll("#commens_button")
     const model_wind_info = document.querySelector("#model_commens")
     
@@ -62,7 +63,6 @@ setTimeout(()=>{
         for(button of buttonModel){
             button.addEventListener("click", (e)=>{
                 model_wind_info.classList.add("model_activ");
-                loadComments()
             })
         }
         model_wind_info.addEventListener("click", (e)=>{
@@ -71,7 +71,7 @@ setTimeout(()=>{
             }
         })
       } catch (err) {}
-}, 1000)
+}
 
 
 function viewCommends(data){
@@ -89,8 +89,8 @@ function viewCommends(data){
     }    
 }
 
-function loadComments(){
 
+window.addEventListener('popstate', function(e){
     const url = new URL(window.location.href.replace("#", "?"))
     const params = url.searchParams
     const message = {
@@ -115,32 +115,4 @@ function loadComments(){
             viewCommends(data.data)
         })
     })
-}
-/* 
-function pass(){
-
-    const url = new URL(window.location.href.replace("#", "?"))
-    const params = url.searchParams
-    const message = {
-        id: params.get("id"),
-    }
-	console.log(message)
-    fetch(`${window.origin}/load_view_comments`, {
-        method:"POST",
-        credentials: "include",
-        body: JSON.stringify(message),
-        cache: "no-cache",
-        headers: new Headers({
-            "content-type": "application/json"
-        })
-    })
-    .then((response)=>{
-        if(response.status !== 200){
-            console.log("lol")
-            return;
-        }
-        response.json().then((data)=>{
-            viewCommends(data.data)
-        })
-    })
-} */
+})

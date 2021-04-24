@@ -68,6 +68,7 @@ button:focus{
     height: 70%;
     display: flex;
     padding: 0 60px;
+    cursor: pointer;
 }
 
 .header_menu h1{
@@ -100,6 +101,14 @@ button:focus{
     transition: 0.1s;
     text-align: center;
     border: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.btn_marg{
+    margin-left: 10px;
 }
 
 .button::before,
@@ -139,7 +148,8 @@ button:focus{
 .head{
     width: 100%;
     max-width: 1200px;
-    margin: 100px auto;
+    margin: 0 auto;
+    padding: 70px 0;
     text-align: center;
     font-size: 50px;
 }
@@ -256,6 +266,11 @@ button:focus{
     display: flex;
     align-items: center;
     justify-content: end;
+    color: black;
+}
+
+.card_text_info a{
+    color: black;
 }
 
 .card_text_info h3{
@@ -460,4 +475,16 @@ button:focus{
     margin: 5px auto;
     display: flex;
     align-items: center;
+}
+
+.filter_block{
+    width: 90vw;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    padding: 20px 0;
+}
+
+.search{
+    width: 100%;
 }

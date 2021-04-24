@@ -1,9 +1,19 @@
 .form{
-    height: 100%;
+    height: 40vh;
     display: flex;
-    justify-items: center;
+    justify-content: space-around;
     flex-direction: column;
-    width: 30vh;
+    max-width: 60vw;
+    width: 50vw;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    padding: 85px 35px;
+    background-color: white;
+}
+
+.form_search{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
 }
 
 .or{
@@ -96,7 +106,7 @@
     flex-direction: column;
     background-color: black;
     position: relative;
-    margin:10px 0 80px 0;
+    margin:0px 0 15px 0;
 }
 
 .file_input span{
@@ -178,4 +188,13 @@
     top: -45px;
     color: black;
     font-size: 25px;
+}
+
+.input_search{
+    width: 98%;
+    background-color: rgb(245, 245, 245);    
+}
+
+.form_load{
+    height: 60vh;
 }

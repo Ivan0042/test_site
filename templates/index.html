@@ -1,39 +1,42 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>{{state}}</h1>
-<p>
-	<form method="post">
-		<a><font color="black"> Поиск по названию: </font></a>
-		<input name="text">
-		<input type="submit" class="btn btn-primary" name="search" value="🔍 Поиск" >
+<div class="filter_block">
+	<h1>{{state}}</h1>
+	<div class="search">
+		<form method="post" class="form_search">
+			<div class="box_input" style="flex-grow: 5;">
+				<input name="text" class="input input_search">
+			</div>
+			<button style="flex-grow: 1;" type="submit" class="button button_form" name="search"><span class="material-icons">search</span>Поиск</button>
+		</form>
+	</div>
+	<form method="post" class="form_search" style="justify-content: start">
+		<h2>Сортировка:</h2>
+		{% if state != "Новые треки" %}
+			<input type="submit" class="button button_form btn_marg" name="new" value="Новые треки" >
+		{% else %}
+			<input type="submit" class="button button_form btn_marg" name="new" value="Новые треки" >
+		{% endif %}
+		{% if state != "По прослушиваниям" %}
+			<input type="submit" class="button button_form btn_marg" name="views" value="По прослушиваниям" >
+		{% else %}
+			<input type="submit" class="button button_form btn_marg" name="views" value="По прослушиваниям" >
+		{% endif %}
+		{% if state != "По лайкам/дизлайкам" %}
+			<input type="submit" class="button button_form btn_marg" name="likes" value="По лайкам/дизлайкам" >
+		{% else %}
+			<input type="submit" class="button button_form btn_marg" name="likes" value="По лайкам/дизлайкам" >
+		{% endif %}
+		{% if current_user.is_authenticated %}
+		{% if state != "Мои треки" %}
+			<input type="submit" class="button button_form btn_marg" name="my" value="Мои треки" >
+		{% else %}
+			<input type="submit" class="button button_form btn_marg" name="my" value="Мои треки" >
+		{% endif %}
+		{% endif %}
 	</form>
-</p>
-<p><form method="post">
-	<a><font color="black"> Сортировка: </font></a>
-	{% if state != "Новые треки" %}
-		<input type="submit" class="btn btn-link" name="new" value="Новые треки" >
-	{% else %}
-		<input type="submit" class="btn btn-info" name="new" value="Новые треки" >
-	{% endif %}
-	{% if state != "По прослушиваниям" %}
-		<input type="submit" class="btn btn-link" name="views" value="По прослушиваниям" >
-	{% else %}
-		<input type="submit" class="btn btn-info" name="views" value="По прослушиваниям" >
-	{% endif %}
-	{% if state != "По лайкам/дизлайкам" %}
-		<input type="submit" class="btn btn-link" name="likes" value="По лайкам/дизлайкам" >
-	{% else %}
-		<input type="submit" class="btn btn-info" name="likes" value="По лайкам/дизлайкам" >
-	{% endif %}
-	{% if current_user.is_authenticated %}
-	{% if state != "Мои треки" %}
-		<input type="submit" class="btn btn-link" name="my" value="Мои треки" >
-	{% else %}
-		<input type="submit" class="btn btn-info" name="my" value="Мои треки" >
-	{% endif %}
-	{% endif %}
-</form></p>
+</div>
 <div class="list_music">
 	<script src="{{ url_for('static', filename='js/load_music.js') }}"></script>
 </div>
