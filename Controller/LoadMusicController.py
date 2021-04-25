@@ -5,7 +5,7 @@ from flask import jsonify, make_response
 from Class.Interfase.IController import IController
 from Class.MakeResponse import MakeResponse
 from Models.Comment import Comment
-from sqlalchemy import desc
+from sqlalchemy import desc, asc
 import pickle
 
 
@@ -16,7 +16,7 @@ class LoadMusicController(IController):
         if state == 'Новые треки':
             sounds = app().context.query(Sound).order_by(desc(Sound.created_date))
         elif state == 'По прослушиваниям':
-            sounds = app().context.query(Sound).order_by(desc(Sound.listening))
+            sounds = app().context.query(Sound).order_by(asc(Sound.listening))
         elif state == 'По лайкам/дизлайкам':
             sounds = sorted(sounds, key=lambda x: len(pickle.loads(x.like)) - len(pickle.loads(x.dislike)))
             sounds.reverse()
